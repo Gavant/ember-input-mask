@@ -1,56 +1,53 @@
 module.exports = {
-  root: true,
-  parser: 'babel-eslint',
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true
-    }
-  },
-  plugins: [
-    'ember'
-  ],
-  extends: [
-    'eslint:recommended',
-    'plugin:ember/recommended'
-  ],
-  env: {
-    browser: true
-  },
-  rules: {
-    'ember/no-jquery': 'error'
-  },
-  overrides: [
-    // node files
-    {
-      files: [
-        '.eslintrc.js',
-        '.template-lintrc.js',
-        'ember-cli-build.js',
-        'index.js',
-        'testem.js',
-        'blueprints/*/index.js',
-        'config/**/*.js',
-        'tests/dummy/config/**/*.js'
-      ],
-      excludedFiles: [
-        'addon/**',
-        'addon-test-support/**',
-        'app/**',
-        'tests/dummy/app/**'
-      ],
-      parserOptions: {
-        sourceType: 'script'
-      },
-      env: {
-        browser: false,
-        node: true
-      },
-      plugins: ['node'],
-      rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
-        // add your custom rules and overrides for node files here
-      })
-    }
-  ]
+    root: true,
+    parser: 'babel-eslint',
+    parserOptions: {
+        ecmaVersion: 2018,
+        sourceType: 'module',
+        ecmaFeatures: {
+            legacyDecorators: true
+        }
+    },
+    plugins: ['ember', 'prettier'],
+    extends: ['eslint:recommended', 'plugin:ember/recommended'],
+    env: {
+        browser: true
+    },
+    rules: {
+        'ember/no-jquery': 'error',
+        //@see http://eslint.org/docs/rules/no-var
+        'no-var': 'error',
+        //@see http://eslint.org/docs/rules/object-shorthand
+        'object-shorthand': 'error',
+        //@see http://eslint.org/docs/rules/prefer-template
+        'prefer-template': 'error',
+        'prettier/prettier': 'error'
+    },
+    overrides: [
+        // node files
+        {
+            files: [
+                '.eslintrc.js',
+                '.template-lintrc.js',
+                'ember-cli-build.js',
+                'index.js',
+                'testem.js',
+                'blueprints/*/index.js',
+                'config/**/*.js',
+                'tests/dummy/config/**/*.js'
+            ],
+            excludedFiles: ['addon/**', 'addon-test-support/**', 'app/**', 'tests/dummy/app/**'],
+            parserOptions: {
+                sourceType: 'script'
+            },
+            env: {
+                browser: false,
+                node: true
+            },
+            plugins: ['node'],
+            rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
+                // add your custom rules and overrides for node files here
+            })
+        }
+    ]
 };
