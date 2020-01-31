@@ -1,0 +1,10 @@
+<div class="input-mask input-mask-date">
+    <input
+        {{on 'focusin' this.showMask}}
+        {{on 'focusout' this.hideMask}}
+        {{on 'beforeinput' this.updateInput}}
+    />
+    {{#if this.maskVisible}}
+        <span class="mask">{{this.mask}}</span>
+    {{/if}}
+</div>

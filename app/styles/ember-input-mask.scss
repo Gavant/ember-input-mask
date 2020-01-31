@@ -1,0 +1,23 @@
+@import './ember-input-mask/variables';
+
+.input-mask {
+    overflow: auto;
+    white-space: nowrap;
+    &-date {
+        font-size: $gvnt-input-mask-font-size;
+        .mask {
+            display: inline;
+            position: relative;
+            left: -10.73rem;
+            font-size: $gvnt-input-mask-font-size;
+            color: $gray-light;
+        }
+    }
+
+    input {
+        display: inline;
+        border: 1px black solid;
+        font-size: $gvnt-input-mask-font-size;
+        padding-left: 0.5rem;
+    }
+}
