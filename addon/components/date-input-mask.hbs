@@ -2,9 +2,10 @@
     <input
         {{on 'focusin' this.showMask}}
         {{on 'focusout' this.hideMask}}
-        {{on 'beforeinput' this.updateInput}}
+        {{on 'input' this.updateInput}}
+        value={{this.maskedValue}}
     />
-    {{#if this.maskVisible}}
-        <span class="mask">{{this.visibleMask}}</span>
+    {{#if this.mutedMaskVisible}}
+        <span class="mask">{{this.mutedMask}}</span>
     {{/if}}
 </div>
