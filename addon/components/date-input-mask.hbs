@@ -6,6 +6,11 @@
         value={{this.maskedValue}}
     />
     {{#if this.mutedMaskVisible}}
-        <span class="mask">{{this.mutedMask}}</span>
+        <span class="mask">
+            <span class="invisible">
+                {{this.invisibleMask}}
+            </span>
+            {{this.visibleMask}}
+        </span>
     {{/if}}
 </div>

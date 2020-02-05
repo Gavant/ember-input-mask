@@ -8,9 +8,13 @@
         .mask {
             display: inline;
             position: relative;
-            left: -10.73rem;
+            left: -10.78rem;
             font-size: $gvnt-input-mask-font-size;
             color: $gray-light;
+            font-weight: 300;
+            .invisible {
+                // margin-right: -3px;
+            }
         }
     }
 

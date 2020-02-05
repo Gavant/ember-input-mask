@@ -20,8 +20,8 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     mask: string;
     defaultMask: string = '99/99/9999';
     defaultMutedMask: string = 'mm/dd/YYYY';
-    unmaskedValue: string;
     defaultUnMaskedValue: string = '';
+    maskIndices: Object = Object();
     /**
      * A function passed to the component to handle the update of
      * the data passed into the input
@@ -34,7 +34,11 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     // tracked properties
     @tracked mutedMaskVisible: boolean = false;
     @tracked maskedValue: string;
+    @tracked maskRaw: string;
     @tracked mutedMask: string;
+    @tracked unmaskedValue: string;
+    @tracked invisibleMask: string;
+    @tracked visibleMask: string;
 
     // constant attributes
     maskMaps: any = {
@@ -48,9 +52,14 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     constructor(owner: unknown, args: DateInputMaskArgs) {
         super(owner, args);
         this.mask = args.mask || this.defaultMask;
+        this.maskRaw = this.mask.replace(/[\W\D]/g, '');
         this.mutedMask = args.mutedMask || this.defaultMutedMask;
+        this.visibleMask = this.mutedMask;
         this.unmaskedValue = args.unmaskedValue || this.defaultUnMaskedValue;
-        this.maskedValue = this.maskValue(this.unmaskedValue);
+        this.maskedValue = args.unmaskedValue || '';
+        this.indexMasks();
+        this.maskValue();
+        this.invisibleMask = this.createInvisibleMask();
         this.updateValue = args.updateValue;
     }
 
@@ -67,51 +76,64 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     @action
     updateInput(event: InputEvent) {
         const inputElement = event.target as HTMLInputElement;
-        const newValue = inputElement.value as string;
-        if (newValue.length > this.mask.length && this.updateValue) {
+        const newInputValue = inputElement.value as string;
+        const newInputUnmasked = newInputValue.replace(/[\W\D]/g, '');
+        const inputDifference = newInputUnmasked.substring(this.unmaskedValue.length);
+        if (newInputUnmasked.length > this.maskRaw.length && this.updateValue) {
             return this.updateValue();
         } else {
-            this.maskedValue = this.maskValue(newValue);
-            this.mutedMask = this.createMutedMask(this.maskedValue);
+            this.updateUnmaskedValue(inputDifference);
+            this.maskValue();
+            this.visibleMask = this.createMutedMask();
+            this.invisibleMask = this.createInvisibleMask();
         }
     }
 
-    maskValue(unmaskedValue: string): string {
-        if (unmaskedValue.length > 0) {
-            let maskedValue = '';
-            let i = 0;
-            let j = 0;
-            while (i < unmaskedValue.length && j < this.mask.length) {
-                const currentChar = unmaskedValue.charAt(i);
-                const currentMaskValue = this.mask[j];
-                const matchingRegexpValue = get(this.maskMaps, this.mask[j]);
-                const currentRegexp = matchingRegexpValue
-                    ? RegExp(matchingRegexpValue)
-                    : RegExp('this will never match');
-                if (currentRegexp.test(currentChar)) {
-                    maskedValue += currentChar;
-                    i++;
-                    j++;
-                } else if (this.maskPlaceholders.test(currentChar) && currentMaskValue === currentChar) {
-                    maskedValue += currentChar;
-                    i++;
-                    j++;
-                } else if (this.maskPlaceholders.test(currentChar) && currentMaskValue !== currentChar) {
-                    break;
-                }
+    updateUnmaskedValue(unmaskedValue: string): void {
+        const maskRemaining = this.maskRaw.substring(this.unmaskedValue.length);
+        for (let i = 0; i < maskRemaining.length; i++) {
+            const currentChar = unmaskedValue[i];
+            const currentRegexp = RegExp(get(this.maskMaps, maskRemaining[i]));
+            if (currentRegexp.test(currentChar)) {
+                this.unmaskedValue += currentChar;
             }
-            return maskedValue;
-        } else {
-            return unmaskedValue;
         }
     }
 
-    createMutedMask(maskedValue: string): string {
+    maskValue() {
+        let tempMaskedValue = '';
+        for (let i = 0; i < this.unmaskedValue.length; i++) {
+            if (get(this.maskIndices, String(i))) {
+                tempMaskedValue += get(this.maskIndices, String(i));
+            }
+            tempMaskedValue += this.unmaskedValue[i];
+        }
+        this.maskedValue = tempMaskedValue;
+    }
+
+    createMutedMask(): string {
         if (this.maskedValue.length >= this.mutedMask.length) {
             this.mutedMaskVisible = false;
             return '';
         }
         this.mutedMaskVisible = true;
-        return this.maskedValue + this.mutedMask.substring(this.maskedValue.length);
+        return this.mutedMask.substring(this.maskedValue.length);
+    }
+
+    createInvisibleMask(): string {
+        return this.maskedValue;
+    }
+
+    indexMasks() {
+        const maskChars = this.mask.match(/([\W\D]{1,})/) ?? '';
+        let i = 0;
+        let j = 0;
+        while (i < maskChars.length && j < this.mask.length) {
+            const maskRemaining = 'x'.repeat(j - i) + this.mask.substring(j);
+            const maskIndex = maskRemaining.indexOf(maskChars[i]);
+            this.maskIndices[maskIndex] = maskChars[i];
+            j += this.mask.substring(0, maskIndex).length + maskChars[i].length + 1;
+            i++;
+        }
     }
 }
