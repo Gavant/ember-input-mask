@@ -67,16 +67,32 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         this.updateValue = args.updateValue;
     }
 
+    /**
+     * Show the mask on `focusIn` events
+     *
+     * @param {FocusEvent} _event
+     */
     @action
-    showMask(event: FocusEvent) {
+    showMask(_event: FocusEvent) {
         this.mutedMaskVisible = true;
     }
 
+    /**
+     * Hide the mask on `focusOut` events
+     *
+     * @param {FocusEvent} _event
+     */
     @action
-    hideMask(event: FocusEvent) {
+    hideMask(_event: FocusEvent) {
         this.mutedMaskVisible = false;
     }
 
+    /**
+     * Update `unmaskedValue`, `maskedValue`, `visibleMask`,
+     * and `invisibleMask` on input change
+     *
+     * @param {InputEvent} event
+     */
     @action
     updateInput(event: InputEvent) {
         const inputElement = event.target as HTMLInputElement;
@@ -87,11 +103,17 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         } else {
             this.updateUnmaskedValue(newInputUnmasked);
             this.maskValue();
-            this.visibleMask = this.createMutedMask();
+            this.visibleMask = this.createVisibleMask();
             this.invisibleMask = this.createInvisibleMask();
         }
     }
 
+    /**
+     * Update `unmaskedValue` based on the latest
+     * unmasked input value
+     *
+     * @param {string} newInputUnmasked
+     */
     updateUnmaskedValue(newInputUnmasked: string): void {
         let tempUnmaskedValue = '';
         for (let i = 0; i < newInputUnmasked.length; i++) {
@@ -104,6 +126,11 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         this.unmaskedValue = tempUnmaskedValue;
     }
 
+    /**
+     * Update `maskedValue` base on the latest unmasked input
+     * value and the original `mask`
+     *
+     */
     maskValue() {
         let tempMaskedValue = '';
         for (let i = 0; i < this.unmaskedValue.length; i++) {
@@ -115,7 +142,14 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         this.maskedValue = tempMaskedValue;
     }
 
-    createMutedMask(): string {
+    /**
+     * Update `visibleMask` to be displayed within the input
+     * Sets `mutedMaskVisible` to false if the `maskedValue`
+     * is greater in length than the `mutedMask`
+     *
+     * @returns {string}
+     */
+    createVisibleMask(): string {
         if (this.maskedValue.length >= this.mutedMask.length) {
             this.mutedMaskVisible = false;
             return '';
@@ -124,10 +158,21 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         return this.mutedMask.substring(this.maskedValue.length);
     }
 
+    /**
+     * Update `invisibleMask` which is used to offset
+     * the current input values for better UI/UX
+     *
+     * @returns {string}
+     */
     createInvisibleMask(): string {
         return this.maskedValue;
     }
 
+    /**
+     * Update `maskIndices` to declare where mask placeholders
+     * will be placed during input updates
+     *
+     */
     indexMasks() {
         const maskChars = this.mask.match(/([\W\D]{1,})/) ?? '';
         let i = 0;
