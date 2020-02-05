@@ -76,28 +76,28 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     @action
     updateInput(event: InputEvent) {
         const inputElement = event.target as HTMLInputElement;
-        const newInputValue = inputElement.value as string;
+        let newInputValue = inputElement.value as string;
         const newInputUnmasked = newInputValue.replace(/[\W\D]/g, '');
-        const inputDifference = newInputUnmasked.substring(this.unmaskedValue.length);
-        if (newInputUnmasked.length > this.maskRaw.length && this.updateValue) {
-            return this.updateValue();
+        if (newInputUnmasked.length > this.maskRaw.length) {
+            newInputValue = this.maskedValue;
         } else {
-            this.updateUnmaskedValue(inputDifference);
+            this.updateUnmaskedValue(newInputUnmasked);
             this.maskValue();
             this.visibleMask = this.createMutedMask();
             this.invisibleMask = this.createInvisibleMask();
         }
     }
 
-    updateUnmaskedValue(unmaskedValue: string): void {
-        const maskRemaining = this.maskRaw.substring(this.unmaskedValue.length);
-        for (let i = 0; i < maskRemaining.length; i++) {
-            const currentChar = unmaskedValue[i];
-            const currentRegexp = RegExp(get(this.maskMaps, maskRemaining[i]));
+    updateUnmaskedValue(newInputUnmasked: string): void {
+        let tempUnmaskedValue = '';
+        for (let i = 0; i < newInputUnmasked.length; i++) {
+            const currentChar = newInputUnmasked[i];
+            const currentRegexp = RegExp(get(this.maskMaps, this.maskRaw[i]));
             if (currentRegexp.test(currentChar)) {
-                this.unmaskedValue += currentChar;
+                tempUnmaskedValue += currentChar;
             }
         }
+        this.unmaskedValue = tempUnmaskedValue;
     }
 
     maskValue() {
