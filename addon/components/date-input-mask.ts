@@ -40,6 +40,10 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     @tracked invisibleMask: string;
     @tracked visibleMask: string;
 
+    get hasContent() {
+        return this.unmaskedValue.length > 0 ?? false;
+    }
+
     // constant attributes
     maskMaps: any = {
         // TODO: fix type
@@ -79,7 +83,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         let newInputValue = inputElement.value as string;
         const newInputUnmasked = newInputValue.replace(/[\W\D]/g, '');
         if (newInputUnmasked.length > this.maskRaw.length) {
-            newInputValue = this.maskedValue;
+            inputElement.value = this.maskedValue;
         } else {
             this.updateUnmaskedValue(newInputUnmasked);
             this.maskValue();

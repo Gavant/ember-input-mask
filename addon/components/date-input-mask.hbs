@@ -7,7 +7,7 @@
     />
     {{#if this.mutedMaskVisible}}
         <span class="mask">
-            <span class="invisible">
+            <span class="invisible {{if this.hasContent "has-content"}}">
                 {{this.invisibleMask}}
             </span>
             {{this.visibleMask}}

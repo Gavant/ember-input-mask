@@ -13,7 +13,9 @@
             color: $gray-light;
             font-weight: 300;
             .invisible {
-                // margin-right: -3px;
+                &.has-content {
+                    margin-right: -2px;
+                }
             }
         }
     }
