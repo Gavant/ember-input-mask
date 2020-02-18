@@ -17,11 +17,52 @@ interface DateInputMaskArgs {
  */
 
 export default class DateInputMask extends Component<DateInputMaskArgs> {
-    mask: string;
-    defaultMask: string = '99/99/9999';
-    defaultMutedMask: string = 'mm/dd/YYYY';
+    /**
+     * The value used by regular expression matching to
+     * allow or disallow values from being input
+     *
+     * @readonly
+     * @type {string}
+     */
+    get mask(): string {
+        return this.args.mask || '99/99/9999';
+    }
+
+    /**
+     * The mask value without any non-alphanumeric values
+     *
+     * @readonly
+     * @type {string}
+     */
+    get maskRaw(): string {
+        return this.mask.replace(/[\W\D]/g, '');
+    }
+
+    /**
+     * The mask value that appears within the input where
+     * values are missing
+     *
+     * @readonly
+     * @type {string}
+     */
+    get mutedMask(): string {
+        return this.args.mutedMask || 'mm/dd/YYYY';
+    }
+
+    /**
+     * Returns true if the `unmaskedValue` has at least
+     * one character
+     *
+     * @readonly
+     * @type {boolean}
+     */
+    get hasContent(): boolean {
+        return this.unmaskedValue.length > 0;
+    }
+
     defaultUnMaskedValue: string = '';
     maskIndices: Object = Object();
+
     /**
      * A function passed to the component to handle the update of
      * the data passed into the input
@@ -34,17 +75,11 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     // tracked properties
     @tracked mutedMaskVisible: boolean = false;
     @tracked maskedValue: string;
-    @tracked maskRaw: string;
-    @tracked mutedMask: string;
     @tracked unmaskedValue: string;
     @tracked invisibleMask: string;
     @tracked visibleMask: string;
 
-    get hasContent() {
-        return this.unmaskedValue.length > 0 ?? false;
-    }
-
-    // constant attributes
+    // constants
     maskMaps: any = {
         // TODO: fix type
         '9': /\d/,
@@ -55,9 +90,6 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
 
     constructor(owner: unknown, args: DateInputMaskArgs) {
         super(owner, args);
-        this.mask = args.mask || this.defaultMask;
-        this.maskRaw = this.mask.replace(/[\W\D]/g, '');
-        this.mutedMask = args.mutedMask || this.defaultMutedMask;
         this.visibleMask = this.mutedMask;
         this.unmaskedValue = args.unmaskedValue || this.defaultUnMaskedValue;
         this.maskedValue = args.unmaskedValue || '';
@@ -174,7 +206,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      *
      */
     indexMasks() {
-        const maskChars = this.mask.match(/([\W\D]{1,})/) ?? '';
+        const maskChars = this.mask.match(/([\W\D]{1,})/) || '';
         let i = 0;
         let j = 0;
         while (i < maskChars.length && j < this.mask.length) {
