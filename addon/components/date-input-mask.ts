@@ -43,6 +43,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * The mask value without any non-alphanumeric values
      *
      * @readonly
+     * @property maskRaw
      * @type {string}
      */
     get maskRaw(): string {
@@ -66,6 +67,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * one character
      *
      * @readonly
+     * @property hasContent
      * @type {boolean}
      */
     get hasContent(): boolean {
@@ -86,10 +88,41 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     updateValue?: Function;
 
     // tracked properties
+
+    /**
+     * Whether or not the `mutedMask` is visible
+     *
+     * @property mutedMaskVisible
+     * @type {boolean}
+     */
     @tracked mutedMaskVisible: boolean = false;
+
+    /**
+     * The input's value after masking that is visible
+     * within the input
+     *
+     * @property maskedValue
+     * @type {string}
+     */
     @tracked maskedValue: string;
+
+    /**
+     * The portion of the `mutedMask` that is hidden.
+     * Used to create proper spacing within the input
+     *
+     * @property invisibleMask
+     * @type {string}
+     */
     @tracked invisibleMask: string;
+
+    /**
+     * The portion of the `mutedMask` that is still visible
+     *
+     * @property visibleMask
+     * @type {string}
+     */
     @tracked visibleMask: string;
+
     /**
      * The value that is updated after stripping
      * additional mask characters
@@ -238,7 +271,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * the current input values for better UI/UX
      *
      * @private
-     * @method createInvisbleMask
+     * @method createInvisibleMask
      * @return {string}
      */
     private createInvisibleMask(): string {
