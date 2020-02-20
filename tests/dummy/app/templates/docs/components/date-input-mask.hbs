@@ -30,9 +30,8 @@
             <h2 class="docs-md__h2">
                 Passing Down an Action
             </h2>
-            <p>Passing an action down to the component to update data.
-            <p>custom value: {{if (eq this.customValue.length 8) (moment-format this.customValue 'MMMM Do YYYY' 'MMDDYYYY') 'Invalid date'}}</p>
-            </p>
+            <p>Passing an action down to the component to update data.</p>
+            <p>value: <b>{{if (eq this.customValue.length 8) (moment-format this.customValue 'MMMM Do YYYY' 'MMDDYYYY') 'Invalid date'}}</b></p>
             <DocsDemo as |demo|>
                 <demo.example @name="date-input-mask-update-mask.hbs">
                     <DateInputMask
