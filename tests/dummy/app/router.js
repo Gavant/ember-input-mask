@@ -8,8 +8,10 @@ const Router = AddonDocsRouter.extend({
 
 Router.map(function() {
     docsRoute(this, function() {
-        this.route('usage');
-        this.route('date-input-mask');
+        this.route('usage', { path: '/' });
+        this.route('components', function() {
+            this.route('date-input-mask');
+        });
     });
 });
 

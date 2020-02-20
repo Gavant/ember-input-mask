@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action, get } from '@ember/object';
+import { assert } from '@ember/debug';
 
 interface DateInputMaskArgs {
     mask?: string;
@@ -9,12 +10,10 @@ interface DateInputMaskArgs {
     updateValue?: Function;
 }
 
-/**
- * TODO:
- *
- * KNOWN BUGS:
- * 1) Pasting in value freezes the site
- */
+interface MaskIndices {
+    [index: number]: string;
+    [propName: string]: any;
+}
 
 export default class DateInputMask extends Component<DateInputMaskArgs> {
     /**
@@ -25,7 +24,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * @type {string}
      */
     get mask(): string {
-        return this.args.mask || '99/99/9999';
+        return this.args.mask ?? '99/99/9999';
     }
 
     /**
@@ -46,7 +45,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * @type {string}
      */
     get mutedMask(): string {
-        return this.args.mutedMask || 'mm/dd/YYYY';
+        return this.args.mutedMask ?? 'mm/dd/YYYY';
     }
 
     /**
@@ -61,7 +60,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     }
 
     defaultUnMaskedValue: string = '';
-    maskIndices: Object = Object();
+    maskIndices: MaskIndices = Object();
 
     /**
      * A function passed to the component to handle the update of
@@ -75,9 +74,9 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     // tracked properties
     @tracked mutedMaskVisible: boolean = false;
     @tracked maskedValue: string;
-    @tracked unmaskedValue: string;
     @tracked invisibleMask: string;
     @tracked visibleMask: string;
+    @tracked unmaskedValue: string;
 
     // constants
     maskMaps: any = {
@@ -90,12 +89,25 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
 
     constructor(owner: unknown, args: DateInputMaskArgs) {
         super(owner, args);
+        if (args.mask) {
+            assert(
+                'When providing a mask, a mutedMask argument must also be provided to ensure their values are consistent.',
+                args.mutedMask
+            );
+        } else if (args.mutedMask) {
+            assert(
+                'When providing a mutedMask, a mask argument must also be provided to ensure their values are consistent.',
+                args.mask
+            );
+        }
         this.visibleMask = this.mutedMask;
-        this.unmaskedValue = args.unmaskedValue || this.defaultUnMaskedValue;
-        this.maskedValue = args.unmaskedValue || '';
+        this.unmaskedValue = args.unmaskedValue?.toString() ?? '';
+        this.maskedValue = args.unmaskedValue ?? '';
         this.indexMasks();
+        this.updateUnmaskedValue(this.unmaskedValue);
         this.maskValue();
         this.invisibleMask = this.createInvisibleMask();
+        this.visibleMask = this.unmaskedValue ? this.createVisibleMask() : this.mutedMask;
         this.updateValue = args.updateValue;
     }
 
@@ -138,15 +150,19 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
             this.visibleMask = this.createVisibleMask();
             this.invisibleMask = this.createInvisibleMask();
         }
+        if (this.updateValue) {
+            this.updateValue(this.unmaskedValue);
+        }
     }
 
     /**
      * Update `unmaskedValue` based on the latest
-     * unmasked input value
+     * input value
      *
+     * @private
      * @param {string} newInputUnmasked
      */
-    updateUnmaskedValue(newInputUnmasked: string): void {
+    private updateUnmaskedValue(newInputUnmasked: string): void {
         let tempUnmaskedValue = '';
         for (let i = 0; i < newInputUnmasked.length; i++) {
             const currentChar = newInputUnmasked[i];
@@ -162,12 +178,13 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * Update `maskedValue` base on the latest unmasked input
      * value and the original `mask`
      *
+     * @private
      */
-    maskValue() {
+    private maskValue() {
         let tempMaskedValue = '';
         for (let i = 0; i < this.unmaskedValue.length; i++) {
-            if (get(this.maskIndices, String(i))) {
-                tempMaskedValue += get(this.maskIndices, String(i));
+            if (get(this.maskIndices, `${i}`)) {
+                tempMaskedValue += get(this.maskIndices, `${i}`);
             }
             tempMaskedValue += this.unmaskedValue[i];
         }
@@ -179,9 +196,10 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * Sets `mutedMaskVisible` to false if the `maskedValue`
      * is greater in length than the `mutedMask`
      *
+     * @private
      * @returns {string}
      */
-    createVisibleMask(): string {
+    private createVisibleMask(): string {
         if (this.maskedValue.length >= this.mutedMask.length) {
             this.mutedMaskVisible = false;
             return '';
@@ -194,9 +212,10 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * Update `invisibleMask` which is used to offset
      * the current input values for better UI/UX
      *
+     * @private
      * @returns {string}
      */
-    createInvisibleMask(): string {
+    private createInvisibleMask(): string {
         return this.maskedValue;
     }
 
@@ -204,8 +223,9 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * Update `maskIndices` to declare where mask placeholders
      * will be placed during input updates
      *
+     * @private
      */
-    indexMasks() {
+    private indexMasks() {
         const maskChars = this.mask.match(/([\W\D]{1,})/) || '';
         let i = 0;
         let j = 0;
