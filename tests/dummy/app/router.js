@@ -13,6 +13,7 @@ Router.map(function() {
             this.route('date-input-mask');
         });
     });
+    this.route('not-found', { path: '/*path' });
 });
 
 export default Router;

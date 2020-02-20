@@ -11,12 +11,22 @@ Ember input masks built without jQuery
 ## Installation
 
 ```
-ember install ember-input-mask
+ember install @gavant/ember-input-mask
 ```
 
 ## Usage
 
-[Longer description of how to use the addon in apps.]
+For this addon to work properly, you must use SASS:
+
+```
+ember install ember-cli-sass
+```
+
+Upon addon installation, add an import to your app.scss if it isn't already there.
+
+```
+@import 'gavant-ember-input-mask';
+```
 
 ## Contributing
 
