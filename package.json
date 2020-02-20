@@ -5,7 +5,7 @@
     "keywords": [
         "ember-addon"
     ],
-    "repository": "https://github.com/Gavant/ember-input-mask",
+    "repository": "https://github.com/Gavant/ember-input-mask.git",
     "license": "MIT",
     "author": "Gavant Inc.",
     "directories": {
