@@ -7,7 +7,8 @@ module.exports = function(defaults) {
         'ember-bootstrap': {
             bootstrapVersion: 4,
             importBootstrapCSS: false
-        }
+        },
+        snippetExtensions: ['js', 'ts', 'coffee', 'html', 'hbs', 'md', 'css', 'sass', 'scss', 'less', 'emblem', 'yaml']
     });
 
     /*
