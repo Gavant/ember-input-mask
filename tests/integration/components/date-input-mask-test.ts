@@ -12,6 +12,6 @@ module('Integration | Component | date-input-mask', function(hooks) {
 
         await render(hbs`{{date-input-mask}}`);
 
-        assert.equal(this.element.textContent?.trim(), 'mm/dd/YYYY');
+        assert.equal(this.element.textContent?.trim(), '');
     });
 });

@@ -8,6 +8,7 @@
         .mask {
             display: inline;
             position: relative;
+            pointer-events: none;
             left: -10.78rem;
             font-size: $gvnt-input-mask-font-size;
             color: $gvnt-gray-light;
