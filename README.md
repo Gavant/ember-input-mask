@@ -1,6 +1,7 @@
 # ember-input-mask
 
 Ember input masks built without jQuery
+[Docs Page](https://gavant.github.io/ember-input-mask/versions/feature/initial-creation/)
 
 ## Compatibility
 
