@@ -1,7 +1,7 @@
 {
     "name": "@gavant/ember-input-mask",
     "version": "0.0.0",
-    "description": "https://gavant.github.io/ember-input-mask/versions/feature/initial-creation/",
+    "description": "Ember input masks built without jQuery",
     "keywords": [
         "ember-addon"
     ],
