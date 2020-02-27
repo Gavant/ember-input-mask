@@ -179,9 +179,10 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * Show the `maskPlaceholder`
      *
      * @method showMask
+     * @return {void}
      */
     @action
-    showMask() {
+    showMask(): void {
         this.maskPlaceholderVisible = true;
     }
 
@@ -189,21 +190,22 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * Hide the `maskPlaceholder`
      *
      * @method hideMask
+     * @return {void}
      */
     @action
-    hideMask() {
+    hideMask(): void {
         this.maskPlaceholderVisible = false;
     }
 
     /**
-     * Update `value`, `maskedValue`, `visiblePlaceholder`,
-     * and `invisiblePlaceholder` on input change
+     *
      *
      * @param {InputEvent} event
      * @method updateInput
+     * @return {void}
      */
     @action
-    updateInput(event: InputEvent) {
+    updateInput(event: InputEvent): void {
         const inputElement = event.target as HTMLInputElement;
         let newInputValue = inputElement.value as string;
         const newInputUnmasked = newInputValue.replace(/[\W\D]/g, '');
@@ -227,6 +229,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * @private
      * @method updateValue
      * @param {string} newInputUnmasked
+     * @return {void}
      */
     private updateValue(newInputUnmasked: string): void {
         let tempUnmaskedValue = '';
@@ -246,8 +249,9 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      *
      * @private
      * @method maskValue
+     * @return {void}
      */
-    private maskValue() {
+    private maskValue(): void {
         let tempMaskedValue = '';
         for (let i = 0; i < this.value.length; i++) {
             if (get(this.maskIndices, `${i}`)) {
@@ -282,8 +286,9 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      *
      * @private
      * @method indexMasks
+     * @return {void}
      */
-    private indexMasks() {
+    private indexMasks(): void {
         const maskChars = this.mask.match(/([\W\D]{1,})/) || '';
         let i = 0;
         let j = 0;
