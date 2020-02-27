@@ -169,7 +169,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         this.value = args.value?.toString() ?? '';
         this.maskedValue = args.value ?? '';
         this.indexMasks();
-        this.updateUnmaskedValue(this.value);
+        this.updateValue(this.value);
         this.maskValue();
         this.invisiblePlaceholder = this.maskedValue;
         this.visiblePlaceholder = this.value ? this.createVisiblePlaceholder() : this.maskPlaceholder;
@@ -210,7 +210,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         if (newInputUnmasked.length > this.maskRaw.length) {
             inputElement.value = this.maskedValue;
         } else {
-            this.updateUnmaskedValue(newInputUnmasked);
+            this.updateValue(newInputUnmasked);
             this.maskValue();
             this.visiblePlaceholder = this.createVisiblePlaceholder();
             this.invisiblePlaceholder = this.maskedValue;
@@ -225,10 +225,10 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * input value
      *
      * @private
-     * @method updateUnmsakedValue
+     * @method updateValue
      * @param {string} newInputUnmasked
      */
-    private updateUnmaskedValue(newInputUnmasked: string): void {
+    private updateValue(newInputUnmasked: string): void {
         let tempUnmaskedValue = '';
         for (let i = 0; i < newInputUnmasked.length; i++) {
             const currentChar = newInputUnmasked[i];
