@@ -11,3 +11,19 @@ section.item-section {
         font-size: 1.1rem;
     }
 }
+
+.index-demo {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+
+    .demo-text {
+        margin: 1rem 1rem;
+    }
+}
+
+.input-mask {
+    input.input-mask-input {
+        border: 1px black solid;
+    }
+}

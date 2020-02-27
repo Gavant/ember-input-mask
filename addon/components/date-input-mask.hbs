@@ -1,16 +1,19 @@
-<div class="input-mask input-mask-date">
+<div class="input-mask input-mask-date {{this.containerClass}}">
     <input
         {{on 'focusin' this.showMask}}
         {{on 'focusout' this.hideMask}}
         {{on 'input' this.updateInput}}
         value={{this.maskedValue}}
+        class="input-mask-input"
+        type="text"
+        ...attributes
     />
-    {{#if this.mutedMaskVisible}}
-        <span class="mask">
-            <span class="invisible {{if this.hasContent "has-content"}}">
-                {{this.invisibleMask}}
+    {{#if this.maskPlaceholderVisible}}
+        <span class="input-mask-value">
+            <span class="input-mask-invisible-value {{if this.hasContent "has-content"}}">
+                {{this.invisiblePlaceholder}}
             </span>
-            {{this.visibleMask}}
+            {{this.visiblePlaceholder}}
         </span>
     {{/if}}
 </div>

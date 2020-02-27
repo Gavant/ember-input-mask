@@ -29,6 +29,55 @@ Upon addon installation, add an import to your app.scss if it isn't already ther
 @import 'gavant-ember-input-mask';
 ```
 
+A basic date-input-mask can be created in the following way:
+
+Template
+
+```
+<DateInputMask />
+```
+
+This will create a date input mask that displays `mm/dd/YYYY` on focus and uses `99/99/9999` for input validation. (9 represents a digit).
+
+A custom mask can be implemented like this:
+
+Template
+
+```
+<DateInputMask
+    @mask="99-99-9999"
+    @mutedMask="mm-dd-YYYY"
+/>
+```
+
+This will display `mm-dd-YYYY` on focus and uses `99-99-9999` for input validation. It is important that the placeholders (dashes) here are the same character value. Using `@mask="99/99/9999` here would cause some unexpected behavior.
+
+Data can also be updating using standard Octane DDAU patterns:
+
+Template
+
+```
+<DateInputMask
+    @updateValue={{this.updateValue}}
+    @unmaskedValue={{this.myValue}}
+/>
+```
+
+Component
+
+```
+export default class CustomController extends Controller {
+    myValue = '01012020';
+
+    @action
+    updateValue(newValue) {
+        this.myValue = newValue;
+    }
+}
+```
+
+`newValue` is the the current unmasked value.
+
 ## Contributing
 
 See the [Contributing](CONTRIBUTING.md) guide for details.

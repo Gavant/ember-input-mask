@@ -3,11 +3,12 @@ import { tracked } from '@glimmer/tracking';
 import { action, get } from '@ember/object';
 import { assert } from '@ember/debug';
 
-interface DateInputMaskArgs {
+export interface DateInputMaskArgs {
     mask?: string;
-    mutedMask?: string;
-    unmaskedValue?: string;
-    updateValue?: Function;
+    maskPlaceholder?: string;
+    value?: string;
+    onUpdate?: Function;
+    containerClass?: string;
 }
 
 interface MaskIndices {
@@ -27,6 +28,17 @@ interface MaskIndices {
  * @public
  */
 export default class DateInputMask extends Component<DateInputMaskArgs> {
+    /**
+     * A class string used to style the input and label container
+     *
+     * @readonly
+     * @argument containerClass
+     * @type {string}
+     */
+    get containerClass(): string {
+        return this.args.containerClass || '';
+    }
+
     /**
      * The value used by regular expression matching to
      * allow or disallow values from being input
@@ -55,15 +67,15 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * values are missing
      *
      * @readonly
-     * @argument mutedMask
+     * @argument maskPlaceholder
      * @type {string}
      */
-    get mutedMask(): string {
-        return this.args.mutedMask ?? 'mm/dd/YYYY';
+    get maskPlaceholder(): string {
+        return this.args.maskPlaceholder ?? 'mm/dd/YYYY';
     }
 
     /**
-     * Returns true if the `unmaskedValue` has at least
+     * Returns true if the `value` has at least
      * one character
      *
      * @readonly
@@ -71,31 +83,21 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      * @type {boolean}
      */
     get hasContent(): boolean {
-        return this.unmaskedValue.length > 0;
+        return this.value.length > 0;
     }
 
-    defaultUnMaskedValue: string = '';
-    maskIndices: MaskIndices = Object();
-
-    /**
-     * A function passed to the component to handle the update of
-     * the data passed into the input
-     *
-     * @argument updateValue
-     * @type {Function}
-     * @memberof DateInputMask
-     */
-    updateValue?: Function;
+    defaultValue: string = '';
+    maskIndices: MaskIndices;
 
     // tracked properties
 
     /**
-     * Whether or not the `mutedMask` is visible
+     * Whether or not the `maskPlaceholder` is visible
      *
-     * @property mutedMaskVisible
+     * @property maskPlaceholderVisible
      * @type {boolean}
      */
-    @tracked mutedMaskVisible: boolean = false;
+    @tracked maskPlaceholderVisible: boolean = false;
 
     /**
      * The input's value after masking that is visible
@@ -107,30 +109,30 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     @tracked maskedValue: string;
 
     /**
-     * The portion of the `mutedMask` that is hidden.
+     * The portion of the `maskPlaceholder` that is hidden.
      * Used to create proper spacing within the input
      *
-     * @property invisibleMask
+     * @property invisiblePlaceholder
      * @type {string}
      */
-    @tracked invisibleMask: string;
+    @tracked invisiblePlaceholder: string;
 
     /**
-     * The portion of the `mutedMask` that is still visible
+     * The portion of the `maskPlaceholder` that is still visible
      *
-     * @property visibleMask
+     * @property visiblePlaceholder
      * @type {string}
      */
-    @tracked visibleMask: string;
+    @tracked visiblePlaceholder: string;
 
     /**
      * The value that is updated after stripping
      * additional mask characters
      *
-     * @argument unmaskedValue
+     * @argument value
      * @type {string}
      */
-    @tracked unmaskedValue: string;
+    @tracked value: string;
 
     // constants
     maskMaps: any = {
@@ -141,53 +143,61 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     };
     maskPlaceholders = RegExp(/[\W\D]/);
 
+    /**
+     * Creates an instance of DateInputMask.
+     * Masks the initial `value`, sets the `visiblePlaceholder` and `invisiblePlaceholder`,
+     * and sets the indices for the placeholder values
+     *
+     * @method constructor
+     * @param {unknown} owner
+     * @param {DateInputMaskArgs} args
+     */
     constructor(owner: unknown, args: DateInputMaskArgs) {
         super(owner, args);
         if (args.mask) {
             assert(
-                'When providing a mask, a mutedMask argument must also be provided to ensure their values are consistent.',
-                args.mutedMask
+                'When providing a mask, a maskPlaceholder argument must also be provided to ensure their values are consistent.',
+                args.maskPlaceholder
             );
-        } else if (args.mutedMask) {
+        } else if (args.maskPlaceholder) {
             assert(
-                'When providing a mutedMask, a mask argument must also be provided to ensure their values are consistent.',
+                'When providing a maskPlaceholder, a mask argument must also be provided to ensure their values are consistent.',
                 args.mask
             );
         }
-        this.visibleMask = this.mutedMask;
-        this.unmaskedValue = args.unmaskedValue?.toString() ?? '';
-        this.maskedValue = args.unmaskedValue ?? '';
+        this.maskIndices = {};
+        this.value = args.value?.toString() ?? '';
+        this.maskedValue = args.value ?? '';
         this.indexMasks();
-        this.updateUnmaskedValue(this.unmaskedValue);
+        this.updateUnmaskedValue(this.value);
         this.maskValue();
-        this.invisibleMask = this.createInvisibleMask();
-        this.visibleMask = this.unmaskedValue ? this.createVisibleMask() : this.mutedMask;
-        this.updateValue = args.updateValue;
+        this.invisiblePlaceholder = this.maskedValue;
+        this.visiblePlaceholder = this.value ? this.createVisiblePlaceholder() : this.maskPlaceholder;
     }
 
     /**
-     * Show the `mutedMask`
+     * Show the `maskPlaceholder`
      *
      * @method showMask
      */
     @action
     showMask() {
-        this.mutedMaskVisible = true;
+        this.maskPlaceholderVisible = true;
     }
 
     /**
-     * Hide the `mutedMask`
+     * Hide the `maskPlaceholder`
      *
      * @method hideMask
      */
     @action
     hideMask() {
-        this.mutedMaskVisible = false;
+        this.maskPlaceholderVisible = false;
     }
 
     /**
-     * Update `unmaskedValue`, `maskedValue`, `visibleMask`,
-     * and `invisibleMask` on input change
+     * Update `value`, `maskedValue`, `visiblePlaceholder`,
+     * and `invisiblePlaceholder` on input change
      *
      * @param {InputEvent} event
      * @method updateInput
@@ -202,16 +212,16 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         } else {
             this.updateUnmaskedValue(newInputUnmasked);
             this.maskValue();
-            this.visibleMask = this.createVisibleMask();
-            this.invisibleMask = this.createInvisibleMask();
+            this.visiblePlaceholder = this.createVisiblePlaceholder();
+            this.invisiblePlaceholder = this.maskedValue;
         }
-        if (this.updateValue) {
-            this.updateValue(this.unmaskedValue);
+        if (this.args.onUpdate) {
+            this.args.onUpdate(this.value);
         }
     }
 
     /**
-     * Update `unmaskedValue` based on the latest
+     * Update `value` based on the latest
      * input value
      *
      * @private
@@ -227,7 +237,7 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
                 tempUnmaskedValue += currentChar;
             }
         }
-        this.unmaskedValue = tempUnmaskedValue;
+        this.value = tempUnmaskedValue;
     }
 
     /**
@@ -239,43 +249,31 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
      */
     private maskValue() {
         let tempMaskedValue = '';
-        for (let i = 0; i < this.unmaskedValue.length; i++) {
+        for (let i = 0; i < this.value.length; i++) {
             if (get(this.maskIndices, `${i}`)) {
                 tempMaskedValue += get(this.maskIndices, `${i}`);
             }
-            tempMaskedValue += this.unmaskedValue[i];
+            tempMaskedValue += this.value[i];
         }
         this.maskedValue = tempMaskedValue;
     }
 
     /**
-     * Update `visibleMask` to be displayed within the input
-     * Sets `mutedMaskVisible` to false if the `maskedValue`
-     * is greater in length than the `mutedMask`
+     * Update `visiblePlaceholder` to be displayed within the input
+     * Sets `maskPlaceholderVisible` to false if the `maskedValue`
+     * is greater in length than the `maskPlaceholder`
      *
      * @private
-     * @method createVisibleMask
+     * @method createVisiblePlaceholder
      * @return {string}
      */
-    private createVisibleMask(): string {
-        if (this.maskedValue.length >= this.mutedMask.length) {
-            this.mutedMaskVisible = false;
+    private createVisiblePlaceholder(): string {
+        if (this.maskedValue.length >= this.maskPlaceholder.length) {
+            this.maskPlaceholderVisible = false;
             return '';
         }
-        this.mutedMaskVisible = true;
-        return this.mutedMask.substring(this.maskedValue.length);
-    }
-
-    /**
-     * Update `invisibleMask` which is used to offset
-     * the current input values for better UI/UX
-     *
-     * @private
-     * @method createInvisibleMask
-     * @return {string}
-     */
-    private createInvisibleMask(): string {
-        return this.maskedValue;
+        this.maskPlaceholderVisible = true;
+        return this.maskPlaceholder.substring(this.maskedValue.length);
     }
 
     /**

@@ -5,7 +5,7 @@
     white-space: nowrap;
     &-date {
         font-size: $gvnt-input-mask-font-size;
-        .mask {
+        .input-mask-value {
             display: inline;
             position: relative;
             pointer-events: none;
@@ -13,7 +13,8 @@
             font-size: $gvnt-input-mask-font-size;
             color: $gvnt-gray-light;
             font-weight: 300;
-            .invisible {
+            .input-mask-invisible-value {
+                visibility: hidden;
                 &.has-content {
                     margin-right: -2px;
                 }
@@ -21,9 +22,8 @@
         }
     }
 
-    input {
+    input.input-mask-input {
         display: inline;
-        border: 1px black solid;
         font-size: $gvnt-input-mask-font-size;
         padding-left: 0.5rem;
     }
