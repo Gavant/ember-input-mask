@@ -1,0 +1,49 @@
+<div class="docs-container">
+    <div class="docs-section">
+        <div class="docs-md">
+            <h1 class="docs-md__h1">
+                Date Input Mask
+            </h1>
+            <h2 class="docs-md__h2">
+                Default Mask
+            </h2>
+            <p>A default date-input-mask component.</p>
+            <DocsDemo as |demo|>
+                <demo.example @name="date-input-mask-default.hbs">
+                    <DateInputMask/>
+                </demo.example>
+                {{demo.snippet "date-input-mask-default.hbs"}}
+            </DocsDemo>
+            <h2 class="docs-md__h2">
+                Custom Mask Value
+            </h2>
+            <p>A custom mask.</p>
+            <DocsDemo as |demo|>
+                <demo.example @name="date-input-mask-custom-mask.hbs">
+                    <DateInputMask
+                        @mask="99-99-9999"
+                        @maskPlaceholder="mm-dd-YYYY"
+                    />
+                </demo.example>
+                {{demo.snippet "date-input-mask-custom-mask.hbs"}}
+            </DocsDemo>
+            <h2 class="docs-md__h2">
+                Passing Down an Action
+            </h2>
+            <p>Passing an action down to the component to update data.</p>
+            <p>value: <b>{{if (eq this.customValue.length 8) (moment-format this.customValue 'MMMM Do YYYY' 'MMDDYYYY') 'Invalid date'}}</b></p>
+            <DocsDemo as |demo|>
+                <demo.example @name="date-input-mask-update-mask.hbs">
+                    <DateInputMask
+                        @mask="99-99-9999"
+                        @maskPlaceholder="mm-dd-YYYY"
+                        @onUpdate={{this.updateValue}}
+                        @value={{this.customValue}}
+                    />
+                </demo.example>
+                {{demo.snippet "date-input-mask-update-mask.hbs"}}
+            </DocsDemo>
+            <DocsSnippet @name="date-input-update.js"/>
+        </div>
+    </div>
+</div>

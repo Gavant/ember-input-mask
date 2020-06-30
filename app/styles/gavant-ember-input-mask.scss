@@ -1,0 +1,31 @@
+@import './ember-input-mask/variables';
+
+.input-mask {
+    overflow: auto;
+    white-space: nowrap;
+    position: relative;
+    &-date {
+        font-size: $gvnt-input-mask-font-size;
+        .input-mask-value {
+            position: absolute;
+            pointer-events: none;
+            left: $gvnt-input-left-spacing;
+            font-size: $gvnt-input-mask-font-size;
+            color: $gvnt-gray-light;
+            font-weight: $gvnt-font-weight;
+            .input-mask-invisible-value {
+                visibility: hidden;
+                &.has-content {
+                    margin-right: $gvnt-invisble-mask-margin;
+                }
+            }
+        }
+    }
+
+    input.input-mask-input {
+        font-size: $gvnt-input-mask-font-size;
+        padding: $gvnt-input-padding;
+        padding-left: $gvnt-input-left-spacing;
+        border: $gvnt-input-border;
+    }
+}
