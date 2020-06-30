@@ -3,28 +3,29 @@
 .input-mask {
     overflow: auto;
     white-space: nowrap;
+    position: relative;
     &-date {
         font-size: $gvnt-input-mask-font-size;
         .input-mask-value {
-            display: inline;
-            position: relative;
+            position: absolute;
             pointer-events: none;
-            left: -10.78rem;
+            left: $gvnt-input-left-spacing;
             font-size: $gvnt-input-mask-font-size;
             color: $gvnt-gray-light;
-            font-weight: 300;
+            font-weight: $gvnt-font-weight;
             .input-mask-invisible-value {
                 visibility: hidden;
                 &.has-content {
-                    margin-right: -2px;
+                    margin-right: $gvnt-invisble-mask-margin;
                 }
             }
         }
     }
 
     input.input-mask-input {
-        display: inline;
         font-size: $gvnt-input-mask-font-size;
-        padding-left: 0.5rem;
+        padding: $gvnt-input-padding;
+        padding-left: $gvnt-input-left-spacing;
+        border: $gvnt-input-border;
     }
 }

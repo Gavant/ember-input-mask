@@ -10,13 +10,13 @@ module('Integration | Component | date-input-mask', function(hooks) {
         // Set any properties with this.set('myProperty', 'value');
         // Handle any actions with this.set('myAction', function(val) { ... });
 
-        await render(hbs`{{date-input-mask}}`);
+        await render(hbs`<DateInputMask/>`);
 
         assert.equal(this.element.textContent?.trim(), '');
     });
 
     test('the input mask works with basic number inputs', async function(assert) {
-        await render(hbs`{{date-input-mask}}`);
+        await render(hbs`<DateInputMask/>`);
         await fillIn('input', '12345678');
 
         const inputMask = this.element.querySelector('.input-mask input') as HTMLInputElement;
@@ -37,7 +37,7 @@ module('Integration | Component | date-input-mask', function(hooks) {
     });
 
     test('the mask placeholder is visible on focus and invisible on lost focus', async function(assert) {
-        await render(hbs`{{date-input-mask}}`);
+        await render(hbs`<DateInputMask/>`);
         await focus('input');
 
         let mutedMask = this.element.querySelector('.input-mask span') as HTMLInputElement;
@@ -49,7 +49,7 @@ module('Integration | Component | date-input-mask', function(hooks) {
     });
 
     test('the mask placeholder, invisible placeholder and mask values update on basic input', async function(assert) {
-        await render(hbs`{{date-input-mask}}`);
+        await render(hbs`<DateInputMask/>`);
         await fillIn('input', '1');
         await focus('input');
 

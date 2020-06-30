@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import { later } from '@ember/runloop';
 import { action, get } from '@ember/object';
 import { assert } from '@ember/debug';
 
@@ -198,7 +199,8 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
     }
 
     /**
-     *
+     * Update the input, mask and unmasked values.
+     * Set the caret position accordingly.
      *
      * @param {InputEvent} event
      * @method updateInput
@@ -219,6 +221,17 @@ export default class DateInputMask extends Component<DateInputMaskArgs> {
         }
         if (this.args.onUpdate) {
             this.args.onUpdate(this.value);
+        }
+        const currentCaret = inputElement.selectionStart || 0;
+        inputElement.focus();
+        if (event.inputType === 'deleteContentBackward' && (currentCaret || currentCaret === 0)) {
+            later(
+                this,
+                () => {
+                    inputElement.setSelectionRange(currentCaret, currentCaret);
+                },
+                0
+            );
         }
     }
 

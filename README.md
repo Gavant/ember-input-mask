@@ -46,7 +46,7 @@ Template
 ```
 <DateInputMask
     @mask="99-99-9999"
-    @mutedMask="mm-dd-YYYY"
+    @maskPlaceholder="mm-dd-YYYY"
 />
 ```
 
@@ -58,8 +58,8 @@ Template
 
 ```
 <DateInputMask
-    @updateValue={{this.updateValue}}
-    @unmaskedValue={{this.myValue}}
+    @onUpdate={{this.updateValue}}
+    @value={{this.myValue}}
 />
 ```
 

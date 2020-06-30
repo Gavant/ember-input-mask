@@ -1,13 +1,14 @@
 import Controller from '@ember/controller';
-import { set, action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 
 // BEGIN-SNIPPET date-input-update.js
 export default class DateInputMaskController extends Controller {
-    customValue = '01012020';
+    @tracked customValue = '01012020';
 
     @action
     updateValue(newValue) {
-        set(this, 'customValue', newValue);
+        this.customValue = newValue;
     }
 }
 // END-SNIPPET
